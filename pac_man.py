@@ -1,11 +1,12 @@
-"""Module"""
+"""Module for simulation of Pac-Man movement"""
 
 
 def get_coin(position, position_without_coin):
     """
-    :param position:
-    :param position_without_coin:
-    :return:
+    The function checks if PacMan was in this cell
+    :param position: cell where PacMan is located
+    :param position_without_coin: a list of coordinates where PacMan was
+    :return: 0 if Pacman was in this cell,  1 if not
     """
     if (position[0], position[1]) not in position_without_coin:
         position_without_coin.append((position[0], position[1]))
@@ -15,11 +16,13 @@ def get_coin(position, position_without_coin):
 
 def walk_in_maze(size, position, path, walls):
     """
-    :param size:
-    :param position:
+    This function calculates the number of coins
+    collected by the PacMan in its path
+    :param size: size of maze
+    :param position: start position of PacMan
     :param path:
-    :param walls:
-    :return:
+    :param walls: wall coordinates
+    :return: the number of coins collected by the PacMan
     """
     count_coins = 0
     position_without_coin = [(position[0], position[1])]
@@ -45,16 +48,20 @@ def walk_in_maze(size, position, path, walls):
                 position[0] -= 1
                 count_coins += get_coin(position, position_without_coin)
         else:
-            raise ValueError("Only WESN letter are allowed")
+            raise Exception("Only WESN letter are allowed")
     return count_coins
 
 
-def simulation_pacman(file):
+def simulation_pacman(file_name):
     """
-    :return:
+    The main function to simulate the game PacMan
+    :param file_name: name file with input data
+    :return: coordinates of cell where Pac-Man finished \
+            the game and total amount of collected coins
     """
-    try:
-        with open(file, "r") as file:
+
+    with open(file_name, "r") as file:
+        try:
             lst = file.readline().split(' ')
             size = (int(lst[0]), int(lst[1]))
             lst = file.readline().split(' ')
@@ -64,17 +71,17 @@ def simulation_pacman(file):
             for line in file:
                 line = line.split(' ')
                 walls.append((int(line[0]), int(line[1])))
-    except ValueError:
-        print("Could not convert data to an integer.")
 
-    if (position[0], position[1]) in walls or \
-            position[0] not in range(1, size[0]) or \
-            position[1] not in range(1, size[1]):
-        return "[-1, -1, 0]"
+            if (position[0], position[1]) in walls or \
+                    position[0] not in range(1, size[0]) or \
+                    position[1] not in range(1, size[1]):
+                return "[-1, -1, 0]"
 
-    count_coins = walk_in_maze(size, position, path, walls)
-    return f"[{position[0]}, {position[1]}, {count_coins}]"
+            count_coins = walk_in_maze(size, position, path, walls)
+            return f"[{position[0]}, {position[1]}, {count_coins}]"
+        except ValueError:
+            raise ValueError("Could not convert data to an integer.")
 
 
 if __name__ == '__main__':
-    print(simulation_pacman("test_input.txt"))
+    print(simulation_pacman("test.txt"))
